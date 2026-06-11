@@ -21,7 +21,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: frontend
-        image: harbor.local/project/portfolio:v1.0.0@sha256:9199999999999999999999999999999999999999999999999999999999999999
+        image: mickey/portfolio:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80

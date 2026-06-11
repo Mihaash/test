@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'SonarQubeScanner'
-        HARBOR_CREDENTIALS_ID = 'harbor-creds'
-        HARBOR_URL = 'harbor.local'
+        DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-creds'
+        DOCKER_HUB_USER = 'mickey'
         PROJECT_NAME = 'devsecops-portfolio'
     }
 
@@ -76,21 +76,21 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t ${HARBOR_URL}/${PROJECT_NAME}/portfolio:${BUILD_NUMBER} ./frontend'
+                sh 'docker build -t ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER} ./frontend'
             }
         }
 
         stage('Trivy - Image Scanning') {
             steps {
-                sh "trivy image --severity HIGH,CRITICAL ${HARBOR_URL}/${PROJECT_NAME}/portfolio:${BUILD_NUMBER}"
+                sh "trivy image --severity HIGH,CRITICAL ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}"
             }
         }
 
-        stage('Push to Harbor') {
+        stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: HARBOR_CREDENTIALS_ID, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "docker login ${HARBOR_URL} -u ${USER} -p ${PASS}"
-                    sh "docker push ${HARBOR_URL}/${PROJECT_NAME}/portfolio:${BUILD_NUMBER}"
+                withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS_ID, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh "docker login -u ${USER} -p ${PASS}"
+                    sh "docker push ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}"
                 }
             }
         }
@@ -98,7 +98,7 @@ pipeline {
         stage('ArgoCD - GitOps Sync') {
             steps {
                 // Usually involves updating a separate manifest repo or a folder in this repo
-                sh "sed -i 's|image:.*|image: ${HARBOR_URL}/${PROJECT_NAME}/portfolio:${BUILD_NUMBER}|' k8s/deployment.yaml"
+                sh "sed -i 's|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|' k8s/deployment.yaml"
                 sh "git add k8s/deployment.yaml && git commit -m 'Update image to ${BUILD_NUMBER}' && git push"
                 sh "argocd app sync ${PROJECT_NAME}"
             }
