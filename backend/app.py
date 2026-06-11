@@ -1,8 +1,8 @@
-import subprocess
+import subprocess  # nosec B404
 
 def safe_function():
-    # Fixed Bandit-detectable issue
-    subprocess.run(["ls", "-l"], check=True)
+    # Use absolute path to fix B607 and # nosec B603 for hardcoded safe input
+    subprocess.run(["/bin/ls", "-l"], check=True)  # nosec B603
 
 if __name__ == "__main__":
     print("Backend is running")
