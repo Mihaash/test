@@ -50,7 +50,7 @@ pipeline {
 
         stage('SonarQube CE - Static Analysis') {
             steps {
-                withSonarQubeEnv('Sonarqube') {
+                withSonarQubeEnv('sonarqube') {
                     sh "${SCANNER_HOME}/bin/sonar-scanner"
                 }
             }
