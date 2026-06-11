@@ -1,0 +1,3 @@
+ignored:
+  - DL3018 # Ignore 'Pin versions in apk add'
+  - DL3008 # Ignore 'Pin versions in apt get install'

@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: portfolio-alerts
+  namespace: portfolio
+  labels:
+    release: prometheus
+spec:
+  groups:
+  - name: portfolio.rules
+    rules:
+    - alert: HighErrorRate
+      expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High Error Rate for Portfolio Service"
+        description: "Portfolio service has > 5% HTTP 5xx errors for the past 1 minute."

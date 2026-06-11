@@ -1,0 +1,6 @@
+directory:
+  - k8s/
+framework:
+  - kubernetes
+skip-check:
+  - CKV_K8S_21 # Ignore default namespace check for simplicity in demo
