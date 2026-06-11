@@ -1,3 +1,7 @@
-[bandit]
-exclude_dirs = ["venv", ".env", "tests"]
-skips = ["B101"]
+# Bandit configuration file
+exclude_dirs:
+  - 'venv'
+  - '.env'
+  - 'tests'
+skips:
+  - 'B101'
