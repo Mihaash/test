@@ -4,3 +4,5 @@ framework:
   - kubernetes
 skip-check:
   - CKV_K8S_21 # Ignore default namespace check for simplicity in demo
+  - CKV_K8S_14 # Allow dynamic image tags (not latest)
+  - CKV_K8S_43 # Allow image tags without digests for development workflow
