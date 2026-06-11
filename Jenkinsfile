@@ -88,7 +88,7 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: docker-creds, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                withCredentials([usernamePassword(credentialsId: "${DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "docker login -u ${USER} -p ${PASS}"
                     sh "docker push ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}"
                 }
