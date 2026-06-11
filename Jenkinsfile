@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'SonarQubeScanner'
-        DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-creds'
-        DOCKER_HUB_USER = 'mickey'
+        DOCKER_HUB_CREDENTIALS_ID = 'docker-creds'
+        DOCKER_HUB_USER = 'mickey06'
         PROJECT_NAME = 'devsecops-portfolio'
     }
 
