@@ -97,16 +97,18 @@ pipeline {
 
         stage('ArgoCD - GitOps Sync') {
             steps {
-                sh """
-                    git config user.email "jenkins@example.com"
-                    git config user.name "Jenkins CI"
-                    git checkout main
-                    sed -i 's|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|' k8s/deployment.yaml
-                    git add k8s/deployment.yaml
-                    git commit -m "Update image to ${BUILD_NUMBER}"
-                    git push origin main
-                    argocd app sync ${PROJECT_NAME}
-                """
+                withCredentials([usernamePassword(credentialsId: 'github token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                    sh """
+                        git config user.email "jenkins@example.com"
+                        git config user.name "Jenkins CI"
+                        git checkout main
+                        sed -i 's|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|' k8s/deployment.yaml
+                        git add k8s/deployment.yaml
+                        git commit -m "Update image to ${BUILD_NUMBER}"
+                        git push https://${GIT_USER}:${GIT_TOKEN}@github.com/mickey/devsecops-portfolio.git main
+                        argocd app sync ${PROJECT_NAME}
+                    """
+                }
             }
         }
 
