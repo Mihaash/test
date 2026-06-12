@@ -5,7 +5,7 @@ pipeline {
         SCANNER_HOME = tool 'SonarQubeScanner'
         DOCKER_HUB_CREDENTIALS_ID = 'docker-creds'
         DOCKER_HUB_USER = 'mickey06'
-        PROJECT_NAME = 'devsecops-portfolio'
+        PROJECT_NAME = 'test'
     }
 
     stages {
@@ -104,8 +104,9 @@ pipeline {
                         git checkout main
                         sed -i 's|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|' k8s/deployment.yaml
                         git add k8s/deployment.yaml
-                        git commit -m "Update image to ${BUILD_NUMBER}"
-                        git push https://${GIT_USER}:${GIT_TOKEN}@github.com/mickey/devsecops-portfolio.git main
+                        git commit -m "Update image to ${BUILD_NUMBER}" || true
+                        git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/Mihaash/test.git
+                        git push origin main
                         argocd app sync ${PROJECT_NAME}
                     """
                 }

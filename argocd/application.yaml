@@ -1,12 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: devsecops-portfolio
+  name: test
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/mickey/devsecops-portfolio.git' # Replace with actual repo URL
+    repoURL: 'https://github.com/Mihaash/test.git'
     targetRevision: HEAD
     path: k8s
   destination:
