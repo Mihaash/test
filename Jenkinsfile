@@ -97,10 +97,16 @@ pipeline {
 
         stage('ArgoCD - GitOps Sync') {
             steps {
-                // Usually involves updating a separate manifest repo or a folder in this repo
-                sh "sed -i 's|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|' k8s/deployment.yaml"
-                sh "git add k8s/deployment.yaml && git commit -m 'Update image to ${BUILD_NUMBER}' && git push"
-                sh "argocd app sync ${PROJECT_NAME}"
+                sh """
+                    git config user.email "jenkins@example.com"
+                    git config user.name "Jenkins CI"
+                    git checkout main
+                    sed -i 's|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|' k8s/deployment.yaml
+                    git add k8s/deployment.yaml
+                    git commit -m "Update image to ${BUILD_NUMBER}"
+                    git push origin main
+                    argocd app sync ${PROJECT_NAME}
+                """
             }
         }
 
