@@ -100,7 +100,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'github token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN'),
-                    string(credentialsId: 'argocd-token', variable: 'ARGOCD_TOKEN')
+                    string(credentialsId: 'argocd-token', variable: 'argocd-token')
                 ]) {
                     sh '''
                         git config user.email "jenkins@example.com"
@@ -111,7 +111,7 @@ pipeline {
                         git commit -m "Update image to ${BUILD_NUMBER}" || true
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/Mihaash/test.git
                         git push origin main
-                        argocd app sync ${PROJECT_NAME} --server ${ARGOCD_SERVER} --auth-token ${ARGOCD_TOKEN} --insecure
+                        argocd app sync ${PROJECT_NAME} --server ${ARGOCD_SERVER} --auth-token ${argocd-token} --insecure
                     '''
                 }
             }
