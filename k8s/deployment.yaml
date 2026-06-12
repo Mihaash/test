@@ -21,7 +21,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: frontend
-        image: mickey06/portfolio:v1.0.0
+        image: mickey06/portfolio:45
         imagePullPolicy: Always
         ports:
         - containerPort: 80
