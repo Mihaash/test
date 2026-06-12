@@ -6,7 +6,7 @@ pipeline {
         DOCKER_HUB_CREDENTIALS_ID = 'docker-creds'
         DOCKER_HUB_USER = 'mickey06'
         PROJECT_NAME = 'test'
-        ARGOCD_SERVER = 'argocd.example.com'
+        ARGOCD_SERVER = 'localhost:32277'
     }
 
     stages {
@@ -100,7 +100,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'github token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN'),
-                    string(credentialsId: 'argocd-token', variable: 'argocd-token')
+                    string(credentialsId: 'argocd-token', variable: 'ARGOCD_TOKEN')
                 ]) {
                     sh '''
                         git config user.email "jenkins@example.com"
@@ -111,7 +111,7 @@ pipeline {
                         git commit -m "Update image to ${BUILD_NUMBER}" || true
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/Mihaash/test.git
                         git push origin main
-                        argocd app sync ${PROJECT_NAME} --server ${ARGOCD_SERVER} --auth-token ${argocd-token} --insecure
+                        argocd app sync ${PROJECT_NAME} --server ${ARGOCD_SERVER} --auth-token ${ARGOCD_TOKEN} --insecure
                     '''
                 }
             }
