@@ -100,9 +100,13 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'github token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN'),
-                    string(credentialsId: 'argocd-token', variable: 'Credentials')
+                    string(credentialsId: 'argocd-token', variable: 'Credentials'),
+                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
                 ]) {
                     sh '''
+                        # Update kubeconfig if needed (placeholder values)
+                        # aws eks update-kubeconfig --name my-cluster --region us-east-1
+                        
                         git config user.email "jenkins@example.com"
                         git config user.name "Jenkins CI"
                         git checkout main
@@ -119,7 +123,9 @@ pipeline {
 
         stage('Kubernetes - Health Check') {
             steps {
-                sh "kubectl rollout status deployment/portfolio-app"
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh "kubectl rollout status deployment/portfolio-app"
+                }
             }
         }
 
