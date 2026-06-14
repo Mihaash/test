@@ -99,23 +99,37 @@ pipeline {
         stage('ArgoCD - GitOps Sync') {
             steps {
                 withCredentials([
-                    usernamePassword(credentialsId: 'github token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN'),
-                    string(credentialsId: 'argocd-token', variable: 'Credentials'),
-                    [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+                    usernamePassword(
+                        credentialsId: 'github-token',
+                        usernameVariable: 'GIT_USER',
+                        passwordVariable: 'GIT_TOKEN'
+                    ),
+                    string(
+                        credentialsId: 'argocd-token',
+                        variable: 'ARGOCD_TOKEN'
+                    )
                 ]) {
+
                     sh '''
-                        # Update kubeconfig if needed (placeholder values)
-                        # aws eks update-kubeconfig --name my-cluster --region us-east-1
-                        
                         git config user.email "jenkins@example.com"
                         git config user.name "Jenkins CI"
+
                         git checkout main
+
                         sed -i "s|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|" k8s/deployment.yaml
+
                         git add k8s/deployment.yaml
                         git commit -m "Update image to ${BUILD_NUMBER}" || true
+
                         git remote set-url origin https://${GIT_USER}:${GIT_TOKEN}@github.com/Mihaash/test.git
+
                         git push origin main
-                        argocd app sync ${PROJECT_NAME} --server ${ARGOCD_SERVER} --auth-token ${Credentials} --insecure
+
+                        argocd app sync ${PROJECT_NAME} \
+                          --server ${ARGOCD_SERVER} \
+                          --auth-token ${ARGOCD_TOKEN} \
+                          --grpc-web \
+                          --insecure
                     '''
                 }
             }
