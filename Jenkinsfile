@@ -6,7 +6,7 @@ pipeline {
         DOCKER_HUB_CREDENTIALS_ID = 'docker-creds'
         DOCKER_HUB_USER = 'mickey06'
         PROJECT_NAME = 'test'
-        ARGOCD_SERVER = '34.203.204.73:30443'
+        ARGOCD_SERVER = 'localhost:30739'
     }
 
     stages {
