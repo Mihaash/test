@@ -137,7 +137,13 @@ pipeline {
 
         stage('Kubernetes - Health Check') {
             steps {
-                sh "kubectl rollout status deployment/portfolio-app"
+                sh '''
+                export KUBECONFIG=/var/lib/jenkins/.kube/config
+
+                kubectl get nodes
+
+                kubectl rollout status deployment/portfolio-app -n portfolio
+                '''
             }
         }
 
