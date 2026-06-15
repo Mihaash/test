@@ -137,9 +137,7 @@ pipeline {
 
         stage('Kubernetes - Health Check') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                    sh "kubectl rollout status deployment/portfolio-app"
-                }
+                sh "kubectl rollout status deployment/portfolio-app"
             }
         }
 
