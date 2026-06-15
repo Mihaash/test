@@ -7,6 +7,7 @@ pipeline {
         DOCKER_HUB_USER = 'mickey06'
         PROJECT_NAME = 'test'
         ARGOCD_SERVER = 'localhost:30739'
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
 
     stages {
@@ -138,10 +139,10 @@ pipeline {
         stage('Kubernetes - Health Check') {
             steps {
                 sh '''
-                export KUBECONFIG=/var/lib/jenkins/.kube/config
-
+                echo "KUBECONFIG=$KUBECONFIG"
+                kubectl config current-context
                 kubectl get nodes
-
+                kubectl get pods -n portfolio
                 kubectl rollout status deployment/portfolio-app -n portfolio
                 '''
             }
