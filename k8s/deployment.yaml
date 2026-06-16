@@ -27,10 +27,10 @@ spec:
         - containerPort: 3000
         securityContext:
           allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
           capabilities:
             drop:
             - ALL
-          readOnlyRootFilesystem: false
         livenessProbe:
           httpGet:
             path: /
