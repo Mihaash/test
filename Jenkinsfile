@@ -115,7 +115,7 @@ pipeline {
                         git config user.email "jenkins@example.com"
                         git config user.name "Jenkins CI"
 
-                        git checkout main
+                        git checkout -B main
 
                         sed -i "s|image:.*|image: ${DOCKER_HUB_USER}/portfolio:${BUILD_NUMBER}|" k8s/deployment.yaml
 
