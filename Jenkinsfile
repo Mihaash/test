@@ -58,17 +58,21 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency Check - SCA') {
-            steps {
-                withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
-                    dependencyCheck(
-                        odcInstallation: 'Dependency-Check',
-                        additionalArguments: "--scan ./ --format ALL --nvdApiKey ${NVD_API_KEY}"
-                    )
-                }
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
+         stage('OWASP Dependency Check - SCA') {
+    steps {
+        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_API_KEY')]) {
+            dependencyCheck(
+                odcInstallation: 'Dependency-Check',
+                additionalArguments: '''
+                    --scan .
+                    --format ALL
+                    --nvdApiKey $NVD_API_KEY
+                    --log odc.log
+                '''
+            )
         }
+    }
+}
 
         stage('Syft - SBOM Generation') {
             steps {
