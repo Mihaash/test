@@ -142,10 +142,8 @@ pipeline {
         docker pull ghcr.io/zaproxy/zaproxy:stable
 
         docker run --rm \
-          --user $(id -u):$(id -g) \
           --network host \
           -v $(pwd):/zap/wrk \
-          -e HOME=/zap/wrk \
           ghcr.io/zaproxy/zaproxy:stable \
           zap-baseline.py \
           -t http://10.10.10.120:30080 \
