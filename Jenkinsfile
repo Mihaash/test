@@ -138,8 +138,17 @@ pipeline {
 
         stage('OWASP ZAP - DAST') {
             steps {
-                // Run ZAP against the deployed application
-                sh 'zap-baseline.py -t http://portfolio-app.local -r zap_report.html'
+                sh '''
+                docker pull ghcr.io/zaproxy/zaproxy:stable
+
+                docker run --rm \
+                --network host \
+                -v $(pwd):/zap/wrk \
+                ghcr.io/zaproxy/zaproxy:stable \
+                zap-baseline.py \
+                -t http://localhost:30080 \
+                -r zap_report.html
+                '''
             }
         }
 
