@@ -6,7 +6,7 @@ pipeline {
         DOCKER_HUB_CREDENTIALS_ID = 'docker-creds'
         DOCKER_HUB_USER = 'mickey06'
         PROJECT_NAME = 'test'
-        ARGOCD_SERVER = 'localhost:30739'
+        ARGOCD_SERVER = 'localhost:30772'
         KUBECONFIG = '/var/lib/jenkins/.kube/config'
     }
 
