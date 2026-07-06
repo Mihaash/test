@@ -136,21 +136,22 @@ pipeline {
             }
         }
 
-        stage('OWASP ZAP - DAST') {
-            steps {
-                sh '''
-                docker pull ghcr.io/zaproxy/zaproxy:stable
+       stage('OWASP ZAP - DAST') {
+    steps {
+        sh '''
+        docker pull ghcr.io/zaproxy/zaproxy:stable
 
-                docker run --rm \
-                --network host \
-                -v $(pwd):/zap/wrk \
-                ghcr.io/zaproxy/zaproxy:stable \
-                zap-baseline.py \
-                -t http://localhost:30080 \
-                -r zap_report.html
-                '''
-            }
-        }
+        docker run --rm \
+          --user $(id -u):$(id -g) \
+          --network host \
+          -v $(pwd):/zap/wrk \
+          ghcr.io/zaproxy/zaproxy:stable \
+          zap-baseline.py \
+          -t http://10.10.10.120:30080 \
+          -r zap_report.html
+        '''
+    }
+}
 
         stage('OPA - Policy Enforcement') {
             steps {
