@@ -136,13 +136,15 @@ pipeline {
             }
         }
 
-       stage('OWASP ZAP - DAST') {
+        stage('OWASP ZAP - DAST') {
     steps {
         sh '''
         docker pull ghcr.io/zaproxy/zaproxy:stable
 
         docker run --rm \
+          --user $(id -u):$(id -g) \
           --network host \
+          -e HOME=/zap/wrk \
           -v $(pwd):/zap/wrk \
           ghcr.io/zaproxy/zaproxy:stable \
           zap-baseline.py \
