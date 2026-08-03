@@ -141,15 +141,20 @@ pipeline {
         sh '''
         docker pull ghcr.io/zaproxy/zaproxy:stable
 
+        mkdir -p zap-results
+        chmod 777 zap-results
+
         docker run --rm \
           --user $(id -u):$(id -g) \
           --network host \
           -e HOME=/zap/wrk \
-          -v $(pwd):/zap/wrk \
+          -v $(pwd)/zap-results:/zap/wrk \
           ghcr.io/zaproxy/zaproxy:stable \
           zap-baseline.py \
           -t http://10.10.10.120:30080 \
           -r zap_report.html
+
+        ls -la zap-results
         '''
     }
 }
