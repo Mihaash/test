@@ -163,26 +163,6 @@ pipeline {
                 sh 'docker run --rm -v $(pwd):/project openpolicyagent/opa:latest eval --format pretty -i /project/k8s/deployment.yaml -d /project/opa-policies/ "data.kubernetes.admission.deny"'
             }
         }
-
-        stage('Prometheus & Grafana - Monitoring Check') {
-            steps {
-                echo "Validating Prometheus targets and Grafana dashboards..."
-                sh '''
-                kubectl get servicemonitors -n portfolio || true
-                curl -s http://prometheus:9090/api/v1/targets | grep portfolio-service || echo "Prometheus endpoint check completed"
-                '''
-            }
-        }
-
-        stage('Alertmanager - Alerting Check') {
-            steps {
-                echo "Ensuring Alertmanager config is active..."
-                sh '''
-                kubectl get prometheusrules -n portfolio || true
-                amtool config show || echo "Alertmanager check completed"
-                '''
-            }
-        }
     }
 
     post {
