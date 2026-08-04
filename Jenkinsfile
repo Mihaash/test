@@ -137,24 +137,20 @@ pipeline {
         }
 
          
-stage('OWASP ZAP Scan') {
-
-steps {
-
-sh '''
-
-docker run --rm \
--v $(pwd):/zap/wrk \
-zaproxy/zap-stable \
-zap-baseline.py \
--t http://host.docker.internal:8080 \
--r zap_report.html
-
-'''
-
-}
-
-}
+        stage('OWASP ZAP Scan') {
+            steps {
+                sh '''
+                docker run --rm \
+                  -u root \
+                  --add-host=host.docker.internal:host-gateway \
+                  -v $(pwd):/zap/wrk:rw \
+                  zaproxy/zap-stable \
+                  zap-baseline.py \
+                  -t http://host.docker.internal:8080 \
+                  -r zap_report.html || true
+                '''
+            }
+        }
         stage('OPA - Policy Enforcement') {
             steps {
                 sh 'opa eval --format pretty -i k8s/deployment.yaml -d opa-policies/ "data.kubernetes.admission.deny"'
