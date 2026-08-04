@@ -140,6 +140,10 @@ pipeline {
         stage('OWASP ZAP Scan') {
             steps {
                 sh '''
+                kubectl port-forward svc/portfolio-service -n portfolio 8080:80 --address 0.0.0.0 &
+                PF_PID=$!
+                sleep 5
+
                 docker run --rm \
                   -u root \
                   --add-host=host.docker.internal:host-gateway \
@@ -148,12 +152,15 @@ pipeline {
                   zap-baseline.py \
                   -t http://host.docker.internal:8080 \
                   -r zap_report.html || true
+
+                kill $PF_PID || true
                 '''
             }
         }
+
         stage('OPA - Policy Enforcement') {
             steps {
-                sh 'opa eval --format pretty -i k8s/deployment.yaml -d opa-policies/ "data.kubernetes.admission.deny"'
+                sh 'docker run --rm -v $(pwd):/project openpolicyagent/opa:latest eval --format pretty -i /project/k8s/deployment.yaml -d /project/opa-policies/ "data.kubernetes.admission.deny"'
             }
         }
 
