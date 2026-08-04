@@ -136,31 +136,25 @@ pipeline {
             }
         }
 
-        stage('OWASP ZAP - DAST') {
-    steps {
-        sh '''
-        docker pull ghcr.io/zaproxy/zaproxy:stable
+         
+stage('OWASP ZAP Scan') {
 
-        mkdir -p zap-results
+steps {
 
-        chmod 777 zap-results
+sh '''
 
-        ls -ld zap-results
+docker run --rm \
+-v $(pwd):/zap/wrk \
+zaproxy/zap-stable \
+zap-baseline.py \
+-t http://host.docker.internal:8080 \
+-r zap_report.html
 
-        docker run --rm \
-          --user $(id -u):$(id -g) \
-          --network host \
-          -e HOME=/zap/wrk \
-          -v $(pwd)/zap-results:/zap/wrk \
-          ghcr.io/zaproxy/zaproxy:stable \
-          zap-baseline.py \
-          -t http://10.10.10.120:30080 \
-          -r zap_report.html \
-          -I
-        '''
-    }
+'''
+
 }
 
+}
         stage('OPA - Policy Enforcement') {
             steps {
                 sh 'opa eval --format pretty -i k8s/deployment.yaml -d opa-policies/ "data.kubernetes.admission.deny"'
